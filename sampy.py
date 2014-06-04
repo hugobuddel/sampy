@@ -1788,12 +1788,12 @@ class SAMPHubServer(object):
     # the protocol prefixed.
     try:
       lockfile = urllib.request.urlopen(lockfilename)
-      lockfile_content = lockfile.readlines()
+      lockfile_content = [l.decode() for l in lockfile.readlines()]
       lockfile.close()
     except:
       try:
         lockfile = urllib.request.urlopen("file://"+lockfilename)
-        lockfile_content = lockfile.readlines()
+        lockfile_content = [l.decode() for l in lockfile.readlines()]
         lockfile.close()
       except:
         return is_running, lockfiledict
@@ -1850,7 +1850,7 @@ class SAMPHubServer(object):
 
       if (os.path.isfile(self._lockfilename)):
         lockfile = open(self._lockfilename, "r")
-        lockfile_content = lockfile.readlines()
+        lockfile_content = [l.decode() for l in lockfile.readlines()]
         lockfile.close()
         for line in lockfile_content:
           if line.strip()[0] != "#":
