@@ -5,7 +5,7 @@ import time
 
 def get_notification(private_key, sender_id, mtype, params, extra):
 	
-	print("Notification %s received" % mtype)
+	print "Notification %s received" % mtype
 
 cli = sampy.SAMPIntegratedClient(metadata = {"samp.name": "Disconnect test"})
 cli.connect()

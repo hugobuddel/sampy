@@ -4,7 +4,7 @@ import time
 
 def receive_notify(private_key, sender_id, mtype, params, extra):
 	
-	print("Extra:", extra)
+	print "Extra:", extra
 	
 
 cli1 = sampy.SAMPIntegratedClient(metadata={"samp.name": "Example 1"})

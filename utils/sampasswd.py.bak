@@ -59,33 +59,33 @@ import getpass
 
 def add(filename, user, group):
 	db = bsddb.hashopen(filename, "w")
-	if user in list(db.keys()):
-		print("WARNING: User %s is already present in file %s!" % (user, filename))
+	if user in db.keys():
+		print "WARNING: User %s is already present in file %s!" % (user, filename)
 	else:
 		password = getpass.getpass("Input password:")
 		password2 = getpass.getpass("Verify password:")
 		if password2 == password:
 			db[user] = "%s%s" % (hashlib.md5(password).digest(),group)
 		else:
-			print("WARNING: Password verification failed, user %s not added." % user)
+			print "WARNING: Password verification failed, user %s not added." % user
 	db.close()
 
 def delete(filename, user):
 	db = bsddb.hashopen(filename, "w")
-	if user in db:
+	if db.has_key(user):
 		del(db[user])
 	db.close()
 
 def list_users(filename):
 	db = bsddb.hashopen(filename, "r")
-	users = list(db.keys())
+	users = db.keys()
 	users.sort()
 	max_len = 0
 	for user in users:
 		max_len = max([max_len, len(user)])
-	print("%s %s" % ("NAME".ljust(max_len), "GROUPS"))
+	print "%s %s" % ("NAME".ljust(max_len), "GROUPS")
 	for user in users:
-		print("%s %s" % (user.ljust(max_len), db[user][16:]))
+		print "%s %s" % (user.ljust(max_len), db[user][16:])
 	db.close()
 
 
@@ -132,16 +132,16 @@ parser.set_defaults(create_file = False)
 (options, args) = parser.parse_args()
 
 if options.filename == None:
-	print("WARNING: Password file name is mandatory!")
+	print "WARNING: Password file name is mandatory!"
 	sys.exit(1)
 
 if options.create_file == False:
 	if not os.path.isfile(options.filename):
-		print("WARNING: Unable to open file %s!" % options.filename)
+		print "WARNING: Unable to open file %s!" % options.filename
 		sys.exit(1)
 
 if options.list_usr == False and options.add_usr == False and options.delete_usr == False:
-	print("WARNING: Specify the action to be performed!")
+	print "WARNING: Specify the action to be performed!"
 	sys.exit(1)
 
 if options.list_usr == True:
@@ -150,14 +150,14 @@ if options.list_usr == True:
 
 if options.add_usr == True:
 	if options.username == None:
-		print("WARNING: User's name is mandatory in order to add a new user!")
+		print "WARNING: User's name is mandatory in order to add a new user!"
 	else:
 		add(options.filename, options.username, options.groupname)
 	sys.exit(1)
 
 if options.delete_usr == True:
 	if options.username == None:
-		print("WARNING: User's name is mandatory in order to delete user!")
+		print "WARNING: User's name is mandatory in order to delete user!"
 	else:
 		delete(options.filename, options.username)
 	sys.exit(1)

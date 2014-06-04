@@ -49,8 +49,8 @@ import os
 import sys
 import time
 
-from http.server import BaseHTTPRequestHandler, HTTPServer
-from socketserver import ThreadingMixIn
+from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+from SocketServer import ThreadingMixIn
 
 class HttpFileServerRequestHandler(BaseHTTPRequestHandler):
   
@@ -98,7 +98,7 @@ if __name__ == "__main__":
   (options, args) = parser.parse_args()
   
   if not args:
-    print("Please provide a file to be served.")
+    print "Please provide a file to be served."
     sys.exit(1)
   
   try:

@@ -13,7 +13,7 @@ cli1 = SAMPIntegratedClient({"samp.name":"Client 1",
 
 def get_message(private_key, sender_id, msg_id, mtype, params, extra):
 
-    print(private_key, sender_id, msg_id, mtype, params, extra)
+    print private_key, sender_id, msg_id, mtype, params, extra
     cli1.reply(msg_id, {"samp.status": SAMP_STATUS_OK,
                         "samp.result": {"result": "ok guys"}})
 
@@ -23,7 +23,7 @@ def get_message(private_key, sender_id, msg_id, mtype, params, extra):
 @SAMPMsgReplierWrapper(cli1)
 def get_message_wrapped(private_key, sender_id, msg_id, mtype, params, extra):
 
-    print(private_key, sender_id, msg_id, mtype, params, extra)
+    print private_key, sender_id, msg_id, mtype, params, extra
     return {"result": "ok guys"}
 
 
@@ -40,17 +40,17 @@ cli2.connect()
 
 
 # CALL NON WRAPPED FUNCTION
-print(cli2.ecallAndWait(cli1.getPublicId(), "my.test.mtype1", \
+print cli2.ecallAndWait(cli1.getPublicId(), "my.test.mtype1", \
                         "5", txt = "sample text", \
-                        extra_kws = {"my.extra.info": "just an example"}))
+                        extra_kws = {"my.extra.info": "just an example"})
 
 try:
     # CALL WRAPPED FUNCTION
-    print(cli2.ecallAndWait(cli1.getPublicId(), "my.test.mtype2", \
+    print cli2.ecallAndWait(cli1.getPublicId(), "my.test.mtype2", \
                             "5", txt = "sample text", \
-                            extra_kws = {"my.extra.info": "just an example"}))
-except SAMPProxyError as err:
-    print(err.faultCode, err.faultString)
+                            extra_kws = {"my.extra.info": "just an example"})
+except SAMPProxyError, err:
+    print err.faultCode, err.faultString
 
 # NOTIFY NON WRAPPED FUNCTION
 cli2.enotifyAll("my.test.mtype1", txt = "sample text")

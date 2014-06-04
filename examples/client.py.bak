@@ -25,24 +25,24 @@ cli2.register()
 cli1.declareMetadata(metadata1)
 cli2.declareMetadata(metadata2)
 
-print("\nCLI1", cli1.getPrivateKey(), cli1.getPublicId(), "\n")
-print("\nCLI2", cli2.getPrivateKey(), cli2.getPublicId(), "\n")
+print "\nCLI1", cli1.getPrivateKey(), cli1.getPublicId(), "\n"
+print "\nCLI2", cli2.getPrivateKey(), cli2.getPublicId(), "\n"
 
 
 # Function called when a notification is received
 def test_receive_notification(private_key, sender_id, mtype, params, extra):
-  print("Notification:", private_key, sender_id, mtype, params, extra, "\n\n")
+  print "Notification:", private_key, sender_id, mtype, params, extra, "\n\n"
 
 # Function called when a call is received
 def test_receive_call(private_key, sender_id, msg_id, mtype, params, extra):
-  print("Call:", private_key, sender_id, msg_id, mtype, params, extra, "\n\n")
+  print "Call:", private_key, sender_id, msg_id, mtype, params, extra, "\n\n"
   myhub.reply(cli1.getPrivateKey(), msg_id,
               {"samp.status": SAMP_STATUS_OK,
                "samp.result": {"txt": "printed"}})
 
 # Function called when a response is received
 def test_receive_response(private_key, sender_id, msg_id, response):
-  print("Response:", private_key, sender_id, msg_id, response, "\n\n")
+  print "Response:", private_key, sender_id, msg_id, response, "\n\n"
 
 # Subscribe Client 1 to "samp.*" and "samp.app.*" MType and bind it to
 # the related functions
@@ -63,29 +63,29 @@ time.sleep(2)
 
 # Client 2 calls to All "samp.app.echo" MType using "my-dummy-print"
 # as message-tag
-print(myhub.callAll(cli2.getPrivateKey(), "my-dummy-print",
+print myhub.callAll(cli2.getPrivateKey(), "my-dummy-print",
                     {"samp.mtype": "samp.app.echo",
-                     "samp.params": {"txt": "Hello world!"}}), "\n\n")
+                     "samp.params": {"txt": "Hello world!"}}), "\n\n"
 
 time.sleep(2)
 
 # Client 2 calls "samp.app.echo" MType on Client 1 tagging it as 
 # "my-dummy-print-specific"
 try:
-  print(cli2.hub.call(cli2.getPrivateKey(),
+  print cli2.hub.call(cli2.getPrivateKey(),
                       cli1.getPublicId(),
                       "my-dummy-print-specific",
                       {"samp.mtype": "samp.app.echo",
-                       "samp.params": {"txt": "Hello Cli 1!"}}), "\n\n")
-except SAMPProxyError as e:
-  print("Error (%s): %s" % (e.faultCode, e.faultString))
+                       "samp.params": {"txt": "Hello Cli 1!"}}), "\n\n"
+except SAMPProxyError, e:
+  print "Error (%s): %s" % (e.faultCode, e.faultString)
 
   
 time.sleep(2)
   
 # Function called to test synchronous calls
 def test_receive_sync_call(private_key, sender_id, msg_id, mtype, params, extra):
-  print("SYNC Call:", sender_id, msg_id, mtype, params, extra, "\n\n")
+  print "SYNC Call:", sender_id, msg_id, mtype, params, extra, "\n\n"
   time.sleep(2)
   myhub.reply(cli1.getPrivateKey(), msg_id,
               {"samp.status": SAMP_STATUS_OK,
@@ -96,19 +96,19 @@ cli1.bindReceiveCall("samp.test", test_receive_sync_call)
 
 now = time.time()
 
-print("SYNCRO --->\n\n")
+print "SYNCRO --->\n\n"
 try:
   # Sync call
-  print(myhub.callAndWait(cli2.getPrivateKey(), 
+  print myhub.callAndWait(cli2.getPrivateKey(), 
                           cli1.getPublicId(), 
                           {"samp.mtype": "samp.test", 
                            "samp.params": {"txt": "Hello SYNCRO Cli 1!"}},
-                          "10"), "\n\n")
-except SAMPProxyError as e:
+                          "10"), "\n\n"
+except SAMPProxyError, e:
   # If timeout expires than a SAMPProxyError is returned
-  print("Error (%s): %s" % (e.faultCode, e.faultString))
+  print "Error (%s): %s" % (e.faultCode, e.faultString)
   
-print("<------SYNCRO (%d) \n\n" % (time.time() - now))
+print "<------SYNCRO (%d) \n\n" % (time.time() - now)
 
 time.sleep(6)
 

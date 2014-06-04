@@ -59,7 +59,7 @@ cli5.declareMetadata(metadata5)
 
 # Function called when a notification is received
 def test_receive_notification(private_key, sender_id, mtype, params, extra):
-  print("Notification:", sender_id, params, "\n")
+  print "Notification:", sender_id, params, "\n"
 
 cli1.bindReceiveNotification("samp.hub.event.shutdown", test_receive_notification)
 cli2.bindReceiveNotification("samp.hub.event.shutdown", test_receive_notification)
