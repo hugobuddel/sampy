@@ -1778,13 +1778,25 @@ class SAMPHubServer(object):
     is_running = False
     lockfiledict = {}
 
-    # Check whether a lockfile alredy exists
+    # Check whether a lockfile alredy exists.
+    # Python3 urllib requires the url to include "file://". 
+    # SAMPHubProxy.getRunningHubs does not include this prefix when
+    # parsing the samp lock file. However, it could be that other
+    # ways of providing the location of the lock file do include a
+    # proper protocol (e.g. setting the SAMP_HUB environment variable).
+    # Reading the file is therefore attempted both with and without
+    # the protocol prefixed.
     try:
       lockfile = urllib.request.urlopen(lockfilename)
       lockfile_content = lockfile.readlines()
       lockfile.close()
     except:
-      return is_running, lockfiledict
+      try:
+        lockfile = urllib.request.urlopen("file://"+lockfilename)
+        lockfile_content = lockfile.readlines()
+        lockfile.close()
+      except:
+        return is_running, lockfiledict
     
     for line in lockfile_content:
       if line.strip()[0] != "#":
@@ -1806,7 +1818,7 @@ class SAMPHubServer(object):
           if sys.exc_info()[0] == ssl.SSLError:
             # SSL connection refused for certifcate reasons...
             # anyway the server is alive
-            is_running = True						
+            is_running = True
 
     return is_running, lockfiledict
 
