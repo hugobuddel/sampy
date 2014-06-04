@@ -602,7 +602,7 @@ class SAMPSimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
           chunk_size = min(size_remaining, max_chunk_size)
           L.append(self.rfile.read(chunk_size))
           size_remaining -= len(L[-1])
-        data = ''.join(L)
+        data = ''.join([l if isinstance(l, str) else l.decode() for l in L])
 
         params, method = xmlrpc.client.loads(data)
         
@@ -647,6 +647,7 @@ class SAMPSimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
       except Exception as e: # This should only happen if the module is buggy
         # internal error, report as HTTP server error
         self.send_response(500)
+        raise
 
         # Send information about the exception if requested
         if hasattr(self.server, '_send_traceback_header') and \
@@ -693,7 +694,7 @@ class SAMPSimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
           chunk_size = min(size_remaining, max_chunk_size)
           L.append(self.rfile.read(chunk_size))
           size_remaining -= len(L[-1])
-        data = ''.join(L)
+        data = ''.join([l if isinstance(l, str) else l.decode() for l in L])
     
         params, method = xmlrpc.client.loads(data)
         
@@ -739,6 +740,7 @@ class SAMPSimpleXMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
         # internal error, report as HTTP server error
         self.send_response(500)
         self.end_headers()
+        raise
       else:
         # got a valid XML RPC response
         self.send_response(200)
@@ -1788,12 +1790,12 @@ class SAMPHubServer(object):
     # the protocol prefixed.
     try:
       lockfile = urllib.request.urlopen(lockfilename)
-      lockfile_content = [l.decode() for l in lockfile.readlines()]
+      lockfile_content = [l if isinstance(l, str) else l.decode() for l in lockfile.readlines()]
       lockfile.close()
     except:
       try:
         lockfile = urllib.request.urlopen("file://"+lockfilename)
-        lockfile_content = [l.decode() for l in lockfile.readlines()]
+        lockfile_content = [l if isinstance(l, str) else l.decode() for l in lockfile.readlines()]
         lockfile.close()
       except:
         return is_running, lockfiledict
@@ -1850,7 +1852,7 @@ class SAMPHubServer(object):
 
       if (os.path.isfile(self._lockfilename)):
         lockfile = open(self._lockfilename, "r")
-        lockfile_content = [l.decode() for l in lockfile.readlines()]
+        lockfile_content = [l if isinstance(l, str) else l.decode() for l in lockfile.readlines()]
         lockfile.close()
         for line in lockfile_content:
           if line.strip()[0] != "#":
