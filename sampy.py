@@ -275,6 +275,8 @@ except ImportError:
 else:
   SSL_SUPPORT = True
 
+#: Force SSL support to be off because the HTTPS implementation does not (yet) work with python3.
+SSL_SUPPORT = False
 
 from http.server import *
 from xmlrpc.server import *
@@ -1057,7 +1059,7 @@ if BDB_SUPPORT:
 
         pwdhash = self.db[id][0:16]
         groups =  self.db[id][16:]
-        pwd = hashlib.md5(pwd).digest()
+        pwd = hashlib.md5(pwd.encode()).digest()
 
         if self.access_restrict != None:
 
@@ -1816,7 +1818,7 @@ class SAMPHubServer(object):
       now = datetime.datetime.utcnow().isoformat()
       host = self._host_name
       user = getpass.getuser()
-      return hashlib.sha1(host + user + now).hexdigest()
+      return hashlib.sha1((host + user + now).encode()).hexdigest()
 
 
   def stop(self):
@@ -2045,8 +2047,8 @@ class SAMPHubServer(object):
     now = datetime.datetime.utcnow().isoformat()
     host = self._host_name
     user = getpass.getuser()
-    private_key = hashlib.md5(str(random.randint(0, 99999999999999999999)) \
-                              + self._hub_secret + host + user + now).hexdigest()
+    private_key = hashlib.md5((str(random.randint(0, 99999999999999999999)) \
+                              + self._hub_secret + host + user + now).encode()).hexdigest()
     self._client_id_counter += 1
     public_id = 'cli#hub'
     if self._client_id_counter > 0:
@@ -2252,7 +2254,7 @@ class SAMPHubServer(object):
     indexes.append(-1)
 
     for i in indexes:
-      tmp_mtype = string.join(msubs[:i+1], ".")
+      tmp_mtype = ".".join(msubs[:i+1])
       if tmp_mtype != mtype:
         if tmp_mtype != "":
           tmp_mtype = tmp_mtype + ".*"
@@ -4484,6 +4486,8 @@ def main():
     pass
   except:
     print("[SAMP] Error: Unexpected error:", sys.exc_info())
+    # Raise to get stack trace.
+    raise
 
 
 if __name__ == "__main__":
